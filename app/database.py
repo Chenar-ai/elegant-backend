@@ -1,13 +1,15 @@
+import os
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-# ✅ Replace with your actual PostgreSQL URL
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:YourNewPassword@localhost/elegantdb"
+# ✅ Use environment variable from Render (DATABASE_URL)
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://postgres:YourNewPassword@localhost/elegantdb"  # fallback for local dev
+)
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base()
 
 # ✅ Quick connection test
