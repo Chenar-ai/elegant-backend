@@ -27,6 +27,7 @@ origins = [
     "http://localhost:5173",
     "http://192.168.0.179:5173",
     "http://172.20.10.4:5173"  # optional, in case you open via IP
+    "http://elegant-global.vercel.app"
 ]
 
 app.add_middleware(
