@@ -8,7 +8,13 @@ DATABASE_URL = os.getenv(
     "postgresql://postgres:YourNewPassword@localhost/elegantdb"  # fallback for local dev
 )
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,     # Checks if the connection is alive before using it
+    pool_recycle=1800,      # Reconnect every 30 minutes
+    pool_size=5,            # Adjust as needed
+    max_overflow=10,        # Allows short spikes in load
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
