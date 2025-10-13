@@ -2,6 +2,7 @@ import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 from app.config import BREVO_CONFIG
 
+
 def send_contact_email(from_email: str, subject: str, message: str):
     configuration = sib_api_v3_sdk.Configuration()
     configuration.api_key['api-key'] = BREVO_CONFIG["api_key"]
@@ -10,9 +11,9 @@ def send_contact_email(from_email: str, subject: str, message: str):
 
     email = sib_api_v3_sdk.SendSmtpEmail(
         to=[{"email": BREVO_CONFIG["to_email"]}],
-        sender={"email": from_email},
+        sender={"email": "info@elegant.global", "name": "Elegant Global Website"},
         subject=subject or "New Contact Form Message",
-        text_content=message
+        text_content=f"From: {from_email}\n\n{message}"
     )
 
     try:
