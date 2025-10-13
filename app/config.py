@@ -1,12 +1,12 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # local dev
+load_dotenv()  # load .env for local development
 
 SMTP_CONFIG = {
-    "host": os.getenv("SMTP_HOST", "smtp.gmail.com"),
-    "port": int(os.getenv("SMTP_PORT", 587)),  # 587 is STARTTLS
-    "user": os.getenv("SMTP_USER"),            # your Gmail email
-    "password": os.getenv("SMTP_PASS"),        # Gmail app password
-    "to_email": os.getenv("TO_EMAIL")          # destination email
+    "host": os.getenv("SMTP_HOST", "mail.privateemail.com"),
+    "port": int(os.getenv("SMTP_PORT", 465)),
+    "user": os.getenv("SMTP_USER"),
+    "password": os.getenv("SMTP_PASS"),
+    "to_email": os.getenv("TO_EMAIL"),
 }
