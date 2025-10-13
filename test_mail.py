@@ -4,7 +4,7 @@ from email.message import EmailMessage
 HOST = "mail.privateemail.com"
 PORT = 465
 USER = "info@elegant.global"
-PASS = "ocof-gzrn-bssf-qbjn"
+PASS = "$/?375hwvdJdvb"
 
 msg = EmailMessage()
 msg["Subject"] = "SMTP Test"
