@@ -1,39 +1,24 @@
-import smtplib
-from email.message import EmailMessage
-from app.config import SMTP_CONFIG
-
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
+from app.config import BREVO_CONFIG
 
 def send_contact_email(from_email: str, subject: str, message: str):
-    msg = EmailMessage()
-    msg["Subject"] = subject or "New Contact Form Message"
-    msg["From"] = SMTP_CONFIG["user"]
-    msg["To"] = SMTP_CONFIG["to_email"]
-    msg.set_content(f"From: {from_email}\n\n{message}")
+    configuration = sib_api_v3_sdk.Configuration()
+    configuration.api_key['api-key'] = BREVO_CONFIG["api_key"]
 
-    # Try SSL first (Namecheap supports this best)
+    api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+
+    email = sib_api_v3_sdk.SendSmtpEmail(
+        to=[{"email": BREVO_CONFIG["to_email"]}],
+        sender={"email": from_email},
+        subject=subject or "New Contact Form Message",
+        text_content=message
+    )
+
     try:
-        print("Trying SSL on port 465...")
-        with smtplib.SMTP_SSL(SMTP_CONFIG["host"], 465, timeout=15) as server:
-            server.set_debuglevel(1)
-            server.login(SMTP_CONFIG["user"], SMTP_CONFIG["password"])
-            server.send_message(msg)
-        print("Email sent successfully via SSL!")
+        response = api_instance.send_transac_email(email)
+        print("✅ Email sent! Message ID:", response.message_id)
         return True
-    except Exception as e:
-        print(f"SSL failed: {e}")
-
-    # Fallback to STARTTLS (port 587)
-    try:
-        print("Trying STARTTLS on port 587...")
-        with smtplib.SMTP(SMTP_CONFIG["host"], 587, timeout=15) as server:
-            server.set_debuglevel(1)
-            server.starttls()
-            server.login(SMTP_CONFIG["user"], SMTP_CONFIG["password"])
-            server.send_message(msg)
-        print("Email sent successfully via STARTTLS!")
-        return True
-    except Exception as e:
-        print(f"STARTTLS failed: {e}")
-
-    print("Email sending failed on both methods.")
-    return False
+    except ApiException as e:
+        print("❌ Brevo email failed:", e)
+        return False
