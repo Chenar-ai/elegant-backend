@@ -48,6 +48,13 @@ async def create_product(
     image: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
 ):
+    print("🧩 DEBUG incoming form fields:")
+    print(f"category_id = {category_id}")
+    print(f"translations = {translations}")
+    print(f"image = {image}")
+    if image is not None:
+        print(f"image filename = {image.filename}")
+
     # Parse translations
     try:
         translations_data = json.loads(translations)
