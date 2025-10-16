@@ -15,7 +15,9 @@ origins = [
     "http://localhost:5173",
     "http://192.168.0.179:5173",
     "http://172.20.10.4:5173",
-    "https://elegant-global.vercel.app"
+    "https://elegant-global.vercel.app",
+    "https://www.elegant.global",
+    "https://elegant.global",
 ]
 
 app.add_middleware(
