@@ -1,3 +1,4 @@
+import time
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
@@ -6,32 +7,22 @@ import json
 
 router = APIRouter()
 
-def get_translation(translations, language_code: str, fallback: str = "en"):
-    """Return translation for requested language, fallback if missing."""
-    # normalize (handle en-US → en)
-    normalized = language_code.split("-")[0].lower()
-
-    # try exact
-    translation = next((t for t in translations if t.language_code == normalized), None)
-    if translation:
-        return translation
-
-    # try fallback
-    if fallback and fallback != normalized:
-        return next((t for t in translations if t.language_code == fallback), None)
-
-    return None
-
-
 @router.get("/{language_code}")
 def get_products(language_code: str, db: Session = Depends(get_db)):
+    start_total = time.time()
+    print("⚡ get_products called")
+
+    # --- DB query timing ---
+    start_query = time.time()
     categories = db.query(Category).options(
         joinedload(Category.products).joinedload(Product.translations),
         joinedload(Category.translations)
     ).all()
+    end_query = time.time()
 
+    # --- Processing timing ---
+    start_process = time.time()
     result = []
-
     for category in categories:
         cat_translation = next(
             (t for t in category.translations if t.language_code == language_code),
@@ -61,13 +52,16 @@ def get_products(language_code: str, db: Session = Depends(get_db)):
                 })
 
         result.append({
-            "id": category.id,   # ✅ fixed: use category.id, not product.id
+            "id": category.id,
             "key": category.key,
             "title": title,
             "intro": intro,
             "references": references,
             "products": products
         })
+    end_process = time.time()
 
-    return {"categories": result or []}  # ✅ always return list
+    end_total = time.time()
+    print(f"⏱️ Query: {end_query - start_query:.3f}s | Processing: {end_process - start_process:.3f}s | Total: {end_total - start_total:.3f}s")
 
+    return {"categories": result or []}
