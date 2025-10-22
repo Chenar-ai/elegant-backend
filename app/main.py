@@ -5,6 +5,7 @@ from app.api import contact, admin as admin_api, get_data_from_database, categor
 from app.models import admin as admin_model
 from app.database import Base, engine
 import os
+from fastapi.responses import JSONResponse
 
 Base.metadata.create_all(bind=engine)
 
@@ -45,6 +46,6 @@ app.include_router(admin_api.router, prefix="/api/admin", tags=["admin"])
 def read_root():
     return {"message": "Backend is running"}
 
-@app.get("/ping")
+@app.api_route("/ping", methods=["GET", "HEAD"])
 def ping():
-    return {"status": "ok"}
+    return JSONResponse(content={"status": "ok"})
