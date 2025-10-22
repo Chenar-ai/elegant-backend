@@ -44,3 +44,7 @@ app.include_router(admin_api.router, prefix="/api/admin", tags=["admin"])
 @app.get("/")
 def read_root():
     return {"message": "Backend is running"}
+
+@app.get("/ping")
+def ping():
+    return {"status": "ok"}
